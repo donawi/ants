@@ -6,16 +6,13 @@ class Ant {
         this.xspeed = Math.random() * (Math.round(Math.random()) * 2 - 1);
         this.yspeed = Math.random() * (Math.round(Math.random()) * 2 - 1);
         this.color = color;
-        this.size = 8;
-        this.pheromoneBuffer = buff;
-        this.fBuffInt = parseInt(this.pheromoneBuffer);
+        this.size = 12;
+        this.ferimoneBuffer = buff;
+        this.fBuffInt = parseInt(this.ferimoneBuffer); 
         this.redAntCount = 0;
         this.blueAntCount = 0;
         this.greenAntCount = 0;
         this.otherAnts = [];
-        this.pBias = "";
-        this.currentEnemy;
-        this.attacking = false;
     }
 
     update() {
@@ -25,28 +22,20 @@ class Ant {
         if (this.y >= (height - this.size / 2) || this.y <= this.size / 2) {
             this.yspeed = -this.yspeed;
         }
-        if (this.attacking) {
-            this.x += random(-1, 1);
-            this.y += random(-1, 1);
-        } else {
-            this.x += this.xspeed + random(-1, 1);
-            this.y += this.yspeed + random(-1, 1);
-        }
-        if (!enemies.includes(this.currentEnemy)) {
-            this.attacking = false;
-        }
+        this.x += this.xspeed;
+        this.y += this.yspeed;
     }
 
     show() {
         switch (this.color) {
             case "g":
-                fill(color(0, 170, 0));
+                fill(color(0, 255, 0));
                 break;
             case "b":
-                fill(color(0, 0, 220));
+                fill(color(0, 0, 255));
                 break;
             case "r":
-                fill(color(170, 0, 0));
+                fill(color(255, 0, 0));
                 break;
         }
         ellipse(this.x, this.y, this.size, this.size - this.size / 1.8);
@@ -56,72 +45,36 @@ class Ant {
         noStroke();
         switch (this.color) {
             case "g":
-                fill(color(0, 255, 0, 5));
+                fill(color(0, 255, 0, 8));
                 break;
             case "b":
-                fill(color(0, 0, 255, 8));
+                fill(color(0, 0, 255, 18));
                 break;
             case "r":
-                fill(color(255, 0, 0, 5));
+                fill(color(255, 0, 0, 9));
                 break;
         }
         ellipse(this.x, this.y, this.fBuffInt, this.fBuffInt - this.fBuffInt / 2);
     }
 
-    alert(enemy) {
-        if (this.chooseWhetherToAttack()) {
-            this.currentEnemy = enemy;
-            this.attacking = true;
-            this.color = "r";
-            if (this.decideIfDie()) {
-                allAnts.splice(allAnts.indexOf(this), 1);
-                deathCount++;
-            }
-            return true;
-        } else {
-            if (this.decideIfDie()) {
-                allAnts.splice(allAnts.indexOf(this), 1);
-                deathCount++;
-            }
-            return false;
-        }
-    }
-
-    chooseWhetherToAttack() {
-        if (politicalBiasIncluded) {
-            if (this.pBias === "lib") {
-                return true;
-            } else {
-                let flipCoin = floor(random() * 2 + 1);
-                if (flipCoin == 2) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        } else return true;
-    }
-
-    decideIfDie() {
-        let flipCoin = floor(random() * 11 + 1);
-        if (flipCoin < 3) {
-            return true;
-        } else {
-            return false;
+    // checks counts of ants seen by each ant and decides whether the ant should change jobs
+    // or remain the same color
+    checkChangeJob(ants) {
+        for (const a of ants) {
+            a.color = weighDataCollected(a);
         }
     }
 
     weightDataCollected(a, alg) {
         switch (alg) {
             case "basic":
-                console.log("Only checking pheromones detected at time of change");
+                console.log("Only checking ferimones detected at time of change");
+                // this.blueAntCount = 0;
+                // this.greenAntCount = 0;
+                // this.redAntCount = 0;
                 return this.basicDecisionAlgorithm(a);
             case "threshold":
-                if (politicalBiasIncluded) {
-                    console.log("change color on threshold based on political bias")
-                } else {
-                    console.log("Only change if threshold passed - no politcal bias");
-                }
+                console.log("Only change color when threshold reached");
                 return this.thresholdAlgorithm(a);
             case "none":
                 console.log("Random selection of color");
@@ -135,15 +88,15 @@ class Ant {
     // checks list of other ants to see if it overlaps any of their buffers
     // - if it does, check color of other ant and add some ammount to this.*antcount 
     //   for that color
-    countNearbyAnts() {
-        for (const a of this.otherAnts) {
+    countNearbyAnts(ants) {
+        for (const a of ants) {
             if (((this.x >= a.x - a.fBuffInt / 2) &&
-                    (this.x <= a.x + a.fBuffInt / 2)) &&
-                ((this.y >= a.y - (a.fBuffInt - a.fBuffInt / 2) / 2) &&
-                    (this.y <= a.y + (a.fBuffInt - a.fBuffInt / 2) / 2))) {
+                (this.x <= a.x + a.fBuffInt / 2)) &&
+                ((this.y >= a.y - (a.fBuffInt - a.fBuffInt / 2 ) / 2) &&
+                (this.y <= a.y + (a.fBuffInt - a.fBuffInt / 2) / 2))) {
                 switch (a.color) {
                     case "b":
-                        this.blueAntCount += .1;
+                        this.blueAntCount += .1; 
                         break;
                     case "g":
                         this.greenAntCount += .1;
@@ -156,15 +109,15 @@ class Ant {
         }
     }
 
-    // checks what pheromones are currently being detected and changes to the one that is least
+    // checks what ferimones are currently being detected and changes to the one that is least
     // common
     basicDecisionAlgorithm(a) {
         let thisAnt = a;
         for (const a of this.otherAnts) {
             if (((this.x >= a.x - a.fBuffInt / 2) &&
-                    (this.x <= a.x + a.fBuffInt / 2)) &&
-                ((this.y >= a.y - (a.fBuffInt - a.fBuffInt / 2) / 2) &&
-                    (this.y <= a.y + (a.fBuffInt - a.fBuffInt / 2) / 2))) {
+                (this.x <= a.x + a.fBuffInt / 2)) &&
+                ((this.y >= a.y - (a.fBuffInt - a.fBuffInt / 2 ) / 2) &&
+                (this.y <= a.y + (a.fBuffInt - a.fBuffInt / 2) / 2))) {
                 switch (a.color) {
                     case "b":
                         this.blueAntCount += .1;
@@ -202,14 +155,7 @@ class Ant {
     // seen by that ant AND the other colors seen are less by a certain margin
     thresholdAlgorithm(a) {
         let totalAntsSeen = this.redAntCount + this.greenAntCount + this.blueAntCount;
-        let threshold = totalAntsSeen * .02;
-        if (politicalBiasIncluded) {
-            if (this.pBias === "lib") {
-                threshold = 0;
-            } else {
-                threshold = totalAntsSeen * .05
-            }
-        }
+        let threshold = totalAntsSeen * .03;
         let c = this.color;
         switch (c) {
             case "b":
@@ -231,9 +177,9 @@ class Ant {
             if (this.blueAntCount - this.redAntCount > threshold ||
                 this.blueAntCount - this.greenAntCount > threshold) {
                 return this.redAntCount < this.greenAntCount ? "r" : "g";
-            } else {
-                return "b";
-            }
+                } else {
+                    return "b";
+                }
         }
     }
 
@@ -247,9 +193,9 @@ class Ant {
             if (this.redAntCount - this.blueAntCount > threshold ||
                 this.redAntCount - this.greenAntCount > threshold) {
                 return this.blueAntCount < this.greenAntCount ? "b" : "g";
-            } else {
-                return "r";
-            }
+                } else {
+                    return "r";
+                }
         }
     }
 
@@ -263,9 +209,9 @@ class Ant {
             if (this.greenAntCount - this.redAntCount > threshold ||
                 this.greenAntCount - this.blueAntCount > threshold) {
                 return this.redAntCount < this.blueAntCount ? "r" : "b";
-            } else {
-                return "g";
-            }
+                } else {
+                    return "g";
+                }
         }
     }
 
@@ -281,5 +227,9 @@ class Ant {
             case 3:
                 return "r";
         }
+    }
+
+    setOtherAnts(ants) {
+        this.otherAnts = ants;
     }
 }
