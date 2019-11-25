@@ -5,7 +5,6 @@
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="shortcut icon" href="#">
 
 	<title>ants</title>
 
@@ -14,9 +13,6 @@
 	<script src="../libraries/p5.sound.js"></script>
 	<script src="sketch.js"></script>
 	<script src="ant.js"></script>
-	<script src="enemy.js"></script>
-	<img src="beetle_med.png" style="display:none"></img>
-	<img src="bee.png" style="display:none"></img>
 
 	<style>
 		body {
@@ -33,65 +29,28 @@
 		h1 {
 			text-align: center;
 		}
+		#green {
+			color: #008000;
 
+		}
+		#red {
+			color: #FF0000;
+		}
+		#blue {
+			color: #0000FF;
+		}
 		input {
 			width: 50px;
 			height: 14px;
 			position: relative;
 		}
-
 		#input-boxes-ant-numbers {
 			font-size: 12px;
 			text-align: center;
 		}
-
-		.slider {
-			-webkit-appearance: none;
-			appearance: none;
+		#simul {
+			height: 20px;
 			width: 100px;
-			height: 7px;
-			border-radius: 2px;
-			background: #c7c7c7;
-			outline: none;
-			opacity: .7;
-		}
-
-		.slider:hover {
-			opacity: 1;
-		}
-
-		.slider::-webkit-slider-thumb {
-			-webkit-appearance: none;
-			appearance: none;
-			width: 13px;
-			height: 13px;
-			background: rgb(54, 54, 59);
-			cursor: pointer;
-			border-radius: 20%;
-		}
-
-		.checkbox {
-			opacity: .7;
-		}
-
-		.checkbox:hover {
-			opacity: 1;
-			cursor: pointer;
-		}
-		#eq-timer {
-			float: left;
-		}
-
-		#avg-spread {
-			float: right;
-		}
-
-		#timer-and-spread {
-			display: grid;
-			grid-template-columns: repeat(3, 33%);  
-    		grid-template-rows: 50px 50px;
-			width: 60%;
-			margin: auto;
 		}
 	</style>
 </head>
@@ -101,44 +60,36 @@
 	<p><strong>Enter a number of ants for each job</strong></p>
 	<div id="input-boxes-ant-numbers">
 		<div>
-			Gatherer Ants <span style="color: #008000">(green)</span>
+			Gatherer Ants <span id="green">(green)</span>
 			<input class="ants-input" id="input1" autocomplete="off"></input>
 		</div><br>
 		<div>
-			Soldier Ants <span style="color: #FF0000">(red)</span>
+			Soldier Ants <span id="red">(red)</span>
 			<input class="ants-input" id="input2" autocomplete="off"></input>
 		</div><br>
 		<div>
-			Builder Ants <span style="color: #0000FF">(blue)</span>
+			Builder Ants <span id="blue">(blue)</span>
 			<input class="ants-input" id="input3" autocomplete="off"></input>
-		</div class="slide-container"><br>
-		<label for="ferimone-strength">Pheromone Strength</label>
-		<input class="slider" type="range" min="0" max="245" value="5" id="buffer-slider">
-		<label for="political-bias">Political Bias</label>
-		<input class="slider" type="range" min="0" max="4" value="0" id="bias-slider">
+		</div><br>
+			<label for="ferimone-strength">Ferimone Strength</label>
+			<input type="range" min="0" max="250" value="5" id="buffer-slider">
 		<div style="margin-top:10px">
-			<input type="checkbox" class="checkbox" id="randomize-checkbox" style="margin-left:20px">
+			<input type="checkbox" id="randomize-checkbox" style="margin-left:20px">
 			<label for="randomize-checkbox">Randomize Decisions</label>
-			<input type="checkbox" class="checkbox" id="memory-checkbox" style="margin-left:20px">
+			<input type="checkbox" id="memory-checkbox" style="margin-left:20px">
 			<label for="memory-checkbox">Add Memory</label>
-			<input type="checkbox" class="checkbox" id="threshold-checkbox" style="margin-left:20px">
+			<input type="checkbox" id="threshold-checkbox" style="margin-left:20px">
 			<label for="threshold-checkbox">Add Threshold</label>
-			<input type="checkbox" class="checkbox" id="bias-checkbox" style="margin-left:20px">
-			<label for="bias-checkbox">Add Bias</label>
 		</div>
-	</div>
-	<br>
-	<a id="simul-button"></a>
+	</div> 
+		<br>
+		<a id="simul"></a>
 	</div><br>
 	<div id="ant-farm"></div>
 	<br>
-	<a id="enemy-button"></a>
 	<p id="color-count"></p>
-	<div id="timer-and-spread">
-		<a id="eq-timer"></a>
-		<a id="avg-spread"></a>
-		<a id="death-count"></a>
-	</div>
+	<p id="eq1-timer"></p>
+	<p id="avg-spread"></p>
 </body>
 
 </html>
